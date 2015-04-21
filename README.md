@@ -1,10 +1,15 @@
-# node-js-getting-started
+# SharinPix Provider Example
+
+This is an example of a SharinPix Provider.
+
+# NodeJS
+## node-js-getting-started
 
 A barebones Node.js app using [Express 4](http://expressjs.com/).
 
 This application support the [Getting Started with Node on Heroku](https://devcenter.heroku.com/articles/getting-started-with-nodejs) article - check it out.
 
-## Running Locally
+### Running Locally
 
 Make sure you have [Node.js](http://nodejs.org/) and the [Heroku Toolbelt](https://toolbelt.heroku.com/) installed.
 
@@ -17,7 +22,7 @@ $ npm start
 
 Your app should now be running on [localhost:5000](http://localhost:5000/).
 
-## Deploying to Heroku
+### Deploying to Heroku
 
 ```
 $ heroku create
@@ -25,7 +30,7 @@ $ git push heroku master
 $ heroku open
 ```
 
-## Documentation
+### Documentation
 
 For more information about using Node.js on Heroku, see these Dev Center articles:
 
