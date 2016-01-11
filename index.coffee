@@ -31,25 +31,25 @@ app.post '/', (req, res)->
   console.log payload
   console.log "Callack : #{payload.callback}"
   request({
-    url: payload.callback,
-    method: 'post'
-    json: true
-    body: {
-      payload: {
-        firstname: 'Kevan',
-        lastname: 'Moothien',
-        phone: '+230 433 34 77'
-        email: 'kevan@spoonconsulting.com'
-        postal_code: 81430
-        country: 'Mauritius'
-        city: 'Saint Pierre'
-        district: 'Moka'
-        street: 'The Factory Building, Vivéa Business Park'
-      }
-    },
+    auth:
+        user: process.env.USER
+        pass: process.env.PASS
+        sendImmediately: false
+    url: 'http://api.imagga.com/v1/tagging?url='+payload.image.full,
+    method: 'get',
+    json: true,
   }, (error, response, body)->
-    console.log error
-    console.log body
+    request({
+      url: payload.callback,
+      method: 'post'
+      json: true
+      body: {
+        payload: response.body
+      },
+    }, (error, response, body)->
+      console.log error
+      console.log body
+    )
   )
 
 app.listen app.get('port'), ->
