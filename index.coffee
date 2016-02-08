@@ -26,32 +26,46 @@ app.post '/', (req, res)->
   res.send('OK')
   res.status(200)
   payload = JSON.parse(req.body.p)
-
   console.log 'PAYLOAD :'
   console.log payload
   console.log "Callack : #{payload.callback}"
-  request({
-    auth:
-        user: process.env.USER
-        pass: process.env.PASS
-        sendImmediately: false
-    url: 'http://api.imagga.com/v1/tagging?url='+payload.image.full,
-    method: 'get',
-    json: true,
+  request {
+    method: 'GET',
+    url: payload.image.large
   }, (error, response, body)->
-    request({
-      url: payload.callback,
-      method: 'post'
-      json: true
-      body: {
-        payload: response.body
+    console.log 'Image downloaded !'
+    # console.log 'data:image/jpeg;base64,'+(new Buffer(body).toString('base64'))
+    request.post(
+      {
+        url: 'http://evercontact-ocr.herokuapp.com/ocr/process/test.json',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'Authorization': 'Basic b2NyY2FyZHJlYWRlcjpvY3JjYXJkcmVhZGVy'
+        },
+        # form: { img: 'data:image/jpeg;base64,'+(new Buffer(body).toString('base64')) }
+        form: { img: (new Buffer(body).toString('base64')) }
       },
-    }, (error, response, body)->
-      console.log error
-      console.log body
+      (err, response, body)->
+        console.log 'Response', err, body
     )
-  )
 
+    # request({
+    #   method: 'POST',
+    #   json: true,
+    # }, (error, response, body)->
+    #   request({
+    #     url: payload.callback,
+    #     method: 'post'
+    #     json: true
+    #     body: {
+    #       payload: response.body
+    #     },
+    #   }, (error, response, body)->
+    #     console.log error
+    #     console.log body
+    #   )
+    # )
+    #
 app.listen app.get('port'), ->
   console.log("Node app is running at localhost:" + app.get('port'))
   console.log "Secret : #{process.env.SECRET}"
