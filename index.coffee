@@ -2,6 +2,7 @@ express = require('express')
 bodyParser = require('body-parser')
 crypto = require('crypto')
 request = require('request')
+fs = require 'fs'
 
 app = express()
 app.use(bodyParser.urlencoded({ extended: false }))
@@ -29,43 +30,32 @@ app.post '/', (req, res)->
   console.log 'PAYLOAD :'
   console.log payload
   console.log "Callack : #{payload.callback}"
-  request {
-    method: 'GET',
-    url: payload.image.large
-  }, (error, response, body)->
-    console.log 'Image downloaded !'
-    # console.log 'data:image/jpeg;base64,'+(new Buffer(body).toString('base64'))
-    request.post(
-      {
-        url: 'http://evercontact-ocr.herokuapp.com/ocr/process/test.json',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded',
-          'Authorization': 'Basic b2NyY2FyZHJlYWRlcjpvY3JjYXJkcmVhZGVy'
+  request.get(payload.image.large, ()->
+      request.post(
+        {
+          url: 'http://detection.orpix-inc.com:8000/api/classify_image/mmr/',
+          headers: {
+            'Authorization': 'Token c409c3378d08c247d874fc7495e7d1120c3d84a8'
+          },
+          formData: {
+            file: fs.createReadStream('test.jpg')
+          }
         },
-        # form: { img: 'data:image/jpeg;base64,'+(new Buffer(body).toString('base64')) }
-        form: { img: (new Buffer(body).toString('base64')) }
-      },
-      (err, response, body)->
-        console.log 'Response', err, body
-    )
-
-    # request({
-    #   method: 'POST',
-    #   json: true,
-    # }, (error, response, body)->
-    #   request({
-    #     url: payload.callback,
-    #     method: 'post'
-    #     json: true
-    #     body: {
-    #       payload: response.body
-    #     },
-    #   }, (error, response, body)->
-    #     console.log error
-    #     console.log body
-    #   )
-    # )
-    #
+        (err, response, body)->
+          request({
+            url: payload.callback,
+            method: 'post'
+            json: true
+            body: {
+              payload: response.body
+            },
+          }, (error, response, body)->
+            console.log error
+            console.log body
+          )
+          console.log 'Response', err, body
+      )
+  ).pipe(fs.createWriteStream('test.jpg'))
 app.listen app.get('port'), ->
   console.log("Node app is running at localhost:" + app.get('port'))
   console.log "Secret : #{process.env.SECRET}"
