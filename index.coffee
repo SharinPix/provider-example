@@ -30,7 +30,7 @@ app.post '/', (req, res)->
   console.log 'PAYLOAD :'
   console.log payload
   console.log "Callack : #{payload.callback}"
-  request.get(payload.image.large, ()->
+  request.get(payload.image.original, ()->
       request.post(
         {
           url: 'http://detection.orpix-inc.com:8000/api/classify_image/mmr/',
