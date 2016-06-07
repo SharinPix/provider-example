@@ -17,6 +17,7 @@ evercontact = (content, callback)->
   requestHelper = (new RequestHelper).withSubject('FAKE TITLE').withHeaderFrom('contact@sharinpix.com').withHeaderTo('contact@sharinpix.com').withContent(content)
   client = Client.getDefault('sharinpix', 'F9PbSWzTpNjA')
   client.execute requestHelper.build(), (responseHandler) ->
+    console.log 'EVERCONTACT REPLIED !:'
     if responseHandler.status == ResponseHandler.ResponseStatus.SUCCEED and responseHandler.hasDetectedContact()
       detectedContact = responseHandler.detectedContact
       console.log 'We have a Contact: ' + detectedContact.firstName + '\n'
@@ -24,7 +25,7 @@ evercontact = (content, callback)->
       callback(detectedContact)
       console.log detectedContact.debugInfo()
     else
-      console.log 'marc'
+      console.log 'EVERCONTACT ERROR !'
       console.log responseHandler.errors
       callback({})
     return
@@ -95,7 +96,6 @@ app.post '/', (req, res)->
           }
         }, (err, response, body)->
           console.log 'response', payload.callback, body
-          console.log body.original
           evercontact body.original, (contact)->
             console.log 'Response from evercontact : ' + contact
             request({
