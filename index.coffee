@@ -97,6 +97,7 @@ app.post '/', (req, res)->
           console.log 'response', payload.callback, body
           console.log body.original
           evercontact body.original, (contact)->
+            console.log 'Response from evercontact : ' + contact
             request({
                 url: payload.callback,
                 method: 'post'
